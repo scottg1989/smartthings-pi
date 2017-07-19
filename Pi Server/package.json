@@ -1,0 +1,27 @@
+{
+  "name": "pi-smartthings-server",
+  "version": "1.0.0",
+  "description": "A REST server which runs on a Raspberry Pi, that can be used in conjunction with SmartThings",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.15.3",
+    "ip": "^1.1.5",
+    "node-upnp-ssdp": "^0.1.1",
+    "node-ssdp": "^3.2.1",
+    "upnp-ssdp": "^0.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scottg1989/smartthings-pi.git"
+  },
+  "author": "Scott Gulliver",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scottg1989/smartthings-pi/issues"
+  },
+  "homepage": "https://github.com/scottg1989/smartthings-pi#readme"
+}

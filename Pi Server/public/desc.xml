@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns="urn:schemas-upnp-org:raspberry-pi-1-0">
+   <specVersion>
+      <major>1</major>
+      <minor>0</minor>
+   </specVersion>
+   <device>
+      <deviceType>urn:schemas-upnp-org:service:raspberry-pi:1</deviceType>
+      <friendlyName>Raspberry Pi SmartThings Server</friendlyName>
+      <manufacturer>Scott Gulliver</manufacturer>
+      <manufacturerURL>http://www.scottgulliver.com</manufacturerURL>
+      <modelDescription>A REST server which runs on a Raspberry Pi, that can be used in conjunction with SmartThings.</modelDescription>
+      <modelName>Raspberry Pi SmartThings Server</modelName>
+      <modelNumber>1.0</modelNumber>
+      <modelURL>http://www.scottgulliver.com</modelURL>
+      <UDN>uuid:362d9414-31a0-48b6-b684-2b4bdd8391d0</UDN>
+      <serviceList>
+      </serviceList>
+   </device>
+</root>
