@@ -33,7 +33,13 @@ preferences {
 
 metadata {
 	definition (name: "Raspberry Pi", namespace: "scottg1989", author: "Scott Gulliver") {
-		capability "Switch"
+		capability "Audio Notification"
+        
+		command "testSpeak"
+		command "testSingleChime"
+		command "testDoubleChime"
+		command "testDoorbell"
+		command "testAlarm"
 	}
 
 
@@ -41,10 +47,21 @@ metadata {
 	}
 
 	tiles {
-		standardTile("button", "device.switch", width: 1, height: 1, canChangeIcon: true) {
-			state "off", label: 'Off', backgroundColor: "#ffffff", action: "switch.on", nextState: "on" 
-			state "on", label: 'On', backgroundColor: "#79b821", action: "switch.on", nextState: "off"
-		}
+        standardTile("speach", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
+            state "default", label:"Test Speach", action:"testSpeak", icon:"st.secondary.refresh"
+        }
+        standardTile("singleChime", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
+            state "default", label:"Single Chime", action:"testSingleChime", icon:"st.secondary.refresh"
+        }
+        standardTile("doubleChime", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
+            state "default", label:"Double Chime", action:"testDoubleChime", icon:"st.secondary.refresh"
+        }
+        standardTile("doorbell", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
+            state "default", label:"Doorbell", action:"testDoorbell", icon:"st.secondary.refresh"
+        }
+        standardTile("alarm", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
+            state "default", label:"Alarm", action:"testAlarm", icon:"st.secondary.refresh"
+        }
 	}
 }
 
@@ -52,21 +69,73 @@ def parse(String description) {
 	log.debug "PARSE CALLED: " + description
 }
 
-def on() {
-	log.debug "Executing on"
-    
-    def result = new physicalgraph.device.HubAction(
-        method: "GET",
-        path: "/test",
+
+// test commands
+
+def testSpeak() {
+     return playText('Test speach.')
+}
+
+def testSingleChime() {
+     return playTrack('SingleChime')
+}
+
+def testDoubleChime() {
+     return playTrack('DoubleChime')
+}
+
+def testDoorbell() {
+     return playTrack('Doorbell')
+}
+
+def testAlarm() {
+     return playTrack('Alarm')
+}
+
+
+// commands
+
+def playText(message, volume=null) {
+	log.info "Executing Command playText($message)"
+    return makeRestCall("GET", "/test?msg=" + urlEncode(message))
+}
+
+def playTextAndResume(message, volume=null) {
+    log.info "playTextAndResume not yet supported."
+}
+
+def playTextAndRestore(message, volume=null) {
+    log.info "playTextAndRestore not yet supported."
+}
+
+def playTrack(uri, level=null) {
+	log.info "Executing Command playTrack($uri)"
+    return makeRestCall("GET", "/playSound?track=" + uri)
+}
+
+def playTrackAndResume(uri, level=null) {
+    log.info "playTrackAndResume not yet supported."
+}
+
+def playTrackAndRestore(uri, level=null) {
+    log.info "playTrackAndRestore not yet supported."
+}
+
+
+// helper functions
+
+def urlEncode(toEncode) {
+    return java.net.URLEncoder.encode(toEncode, "UTF-8")
+}
+
+def makeRestCall(method, path) {
+    return new physicalgraph.device.HubAction(
+        method: method,
+        path: path,
         headers: [
             HOST: getHostAddress()
         ]
-    )
-    return result
-}
-
-def off() {
-	log.debug "Executing 'off'"
+    );
 }
 
 private getCallBackAddress() {

@@ -43,7 +43,29 @@ restServer.use('/static', express.static(path.join(__dirname, 'public')));
 
 restServer.get('/test', function (req, res) {
   console.log('hello!');
-  exec('espeak "Front door ajar"', function () {});
+  var msg = req.query.msg;
+  exec('espeak "' + msg + '"', function () {});
+  res.send('Hello World!');
+});
+
+restServer.get('/playSound', function (req, res) {
+  console.log('playSound');
+  var track = req.query.track;
+
+  switch (track) {
+    case 'SingleChime':
+      exec('aplay singleChime.wav', function () {});
+      break;
+    case 'DoubleChime':
+      exec('aplay doubleChime.wav', function () {});
+      break;
+    case 'Doorbell':
+      exec('aplay doorbell.wav', function () {});
+      break;
+    case 'Alarm':
+      exec('aplay alarm.wav', function () {});
+      break;
+  }
   res.send('Hello World!');
 });
 
