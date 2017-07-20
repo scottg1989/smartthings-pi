@@ -41,8 +41,13 @@ const restServer = express();
 // Serve the description file for SSDP
 restServer.use('/static', express.static(path.join(__dirname, 'public')));
 
-restServer.get('/test', function (req, res) {
-  console.log('hello!');
+restServer.get('/health', function (req, res) {
+  console.log('health!');
+  res.send('OK');
+});
+
+restServer.get('/speak', function (req, res) {
+  console.log('speak!');
   var msg = req.query.msg;
   exec('espeak "' + msg + '"', function () {});
   res.send('Hello World!');

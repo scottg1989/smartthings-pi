@@ -33,6 +33,9 @@ preferences {
 
 metadata {
 	definition (name: "Raspberry Pi", namespace: "scottg1989", author: "Scott Gulliver") {
+        attribute   "online",       "string"
+        attribute   "pingReceived", "string"
+
 		capability "Audio Notification"
         
 		command "testSpeak"
@@ -47,26 +50,59 @@ metadata {
 	}
 
 	tiles {
+        standardTile("online", "device.online", inactiveLabel: false) {
+            state "YES" , label:'Online', backgroundColor:"#6BC168", icon:"https://www.raspberrypi.org/app/uploads/2011/10/Raspi-PGB001.png"
+            state "NO", label:'Offline', backgroundColor:"#F73D3D", icon:"https://www.raspberrypi.org/app/uploads/2011/10/Raspi-PGB001.png"
+        }
+        
         standardTile("speach", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
-            state "default", label:"Test Speach", action:"testSpeak", icon:"st.secondary.refresh"
+            state "default", label:"Test Speach", action:"testSpeak", icon:"st.Electronics.electronics14"
         }
         standardTile("singleChime", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
-            state "default", label:"Single Chime", action:"testSingleChime", icon:"st.secondary.refresh"
+            state "default", label:"Single Chime", action:"testSingleChime", icon:"st.Electronics.electronics14"
         }
         standardTile("doubleChime", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
-            state "default", label:"Double Chime", action:"testDoubleChime", icon:"st.secondary.refresh"
+            state "default", label:"Double Chime", action:"testDoubleChime", icon:"st.Electronics.electronics14"
         }
         standardTile("doorbell", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
-            state "default", label:"Doorbell", action:"testDoorbell", icon:"st.secondary.refresh"
+            state "default", label:"Doorbell", action:"testDoorbell", icon:"st.Electronics.electronics14"
         }
         standardTile("alarm", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
-            state "default", label:"Alarm", action:"testAlarm", icon:"st.secondary.refresh"
+            state "default", label:"Alarm", action:"testAlarm", icon:"st.Electronics.electronics14"
         }
 	}
 }
 
 def parse(String description) {
-	log.debug "PARSE CALLED: " + description
+    def msg = parseLanMessage(description)
+    log.info "status: "  + msg.status          // => http status code of the response
+    def statusOk = msg.status == 200
+    sendEvent(name:"pingReceived", value:statusOk?"YES":"NO", displayed:false, isStateChange: true)
+}
+
+def installed() {
+	setupSchedules()
+}
+
+def updated() {
+	setupSchedules()
+}
+
+def setupSchedules() {
+	log.info "setupSchedules"
+    unschedule(healthCheck)
+    runEvery1Minute(healthCheck)
+}
+
+def healthCheck() {
+	log.info "Running health check"
+    setDeviceNetworkId()
+    
+    //check for flag being set
+    def pingReceived = device.currentValue("pingReceived") == "YES"
+    sendEvent(name:"online", value:pingReceived?"YES":"NO", displayed:false, isStateChange: true)
+    sendEvent(name:"pingReceived", value:"NO", displayed:false, isStateChange: true)
+    sendHubCommand(makeRestCall("GET", "/health"))
 }
 
 
@@ -97,7 +133,7 @@ def testAlarm() {
 
 def playText(message, volume=null) {
 	log.info "Executing Command playText($message)"
-    return makeRestCall("GET", "/test?msg=" + urlEncode(message))
+    return makeRestCall("GET", "/speak?msg=" + urlEncode(message))
 }
 
 def playTextAndResume(message, volume=null) {
@@ -166,4 +202,11 @@ private Integer convertHexToInt(hex) {
 
 private String convertHexToIP(hex) {
     return [convertHexToInt(hex[0..1]),convertHexToInt(hex[2..3]),convertHexToInt(hex[4..5]),convertHexToInt(hex[6..7])].join(".")
+}
+
+private setDeviceNetworkId() {
+    def ip = getDataValue("ip")
+    def port = getDataValue("port")
+  	device.deviceNetworkId = "$ip:$port"
+  	log.debug "Device Network Id set to ${ip}:${port}"
 }
