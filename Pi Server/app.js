@@ -43,14 +43,14 @@ restServer.use('/static', express.static(path.join(__dirname, 'public')));
 
 restServer.get('/health', function (req, res) {
   console.log('health!');
-  res.send('OK');
+  res.send('health:ok');
 });
 
 restServer.get('/speak', function (req, res) {
   console.log('speak!');
   var msg = req.query.msg;
   exec('espeak "' + msg + '"', function () {});
-  res.send('Hello World!');
+  res.send('speak:ok');
 });
 
 restServer.get('/playSound', function (req, res) {
@@ -71,16 +71,20 @@ restServer.get('/playSound', function (req, res) {
       exec('aplay alarm.wav', function () {});
       break;
   }
-  res.send('Hello World!');
+  res.send('sound:ok');
 });
 
 //todo: change to a POST
-restServer.get('/alarm/on', function () {
+restServer.get('/alarm/on', function (req, res) {
+  console.log('alarm on');
+  exec('nohup ./play_alarm_loop.sh &');
   res.send('alarm:on');
 });
 
 //todo: change to a POST
-restServer.get('/alarm/off', function () {
+restServer.get('/alarm/off', function (req, res) {
+  console.log('alarm off');
+  exec('pgrep -f play_alarm_loop.sh | xargs kill');
   res.send('alarm:off');
 });
 

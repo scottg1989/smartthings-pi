@@ -73,25 +73,37 @@ metadata {
         }
 
         standardTile("alarmState", "device.alarm", width: 2, height: 2) {      
-			state "off", label:'No alarm', icon:"st.secondary.off", backgroundColor:"#cccccc"
-			state "siren", label:'Alarm! (Siren)', icon:"st.secondary.siren", backgroundColor:"#fc1e1e"
-			state "strobe", label:'Alarm! (Strobe)', icon:"st.secondary.strobe", backgroundColor:"#fc1e1e"
+			state "off", label:'No alarm', icon:"st.alarm.alarm.alarm", backgroundColor:"#cccccc"
+			state "siren", label:'Alarm! (Siren)', icon:"st.alarm.alarm.alarm", backgroundColor:"#fc1e1e"
+			state "strobe", label:'Alarm! (Strobe)', icon:"st.alarm.alarm.alarm", backgroundColor:"#fc1e1e"
 			state "both", label:'Alarm! (Both)', icon:"st.alarm.alarm.alarm", backgroundColor:"#fc1e1e"
         }
         standardTile("off", "device.alarm", inactiveLabel: false, decoration: "flat") {
  			state "default", label:'Alarm Off', action:"alarm.off"
         } 
         standardTile("on", "device.alarm", inactiveLabel: false, decoration: "flat") {
- 			state "default", label:'Alarm On', action:"alarm.siren"
+ 			state "default", label:'Alarm On', action:"alarm.both"
         }
 	}
 }
 
 def parse(String description) {
     def msg = parseLanMessage(description)
-    log.info "status: "  + msg.status          // => http status code of the response
-    def statusOk = msg.status == 200
-    sendEvent(name:"pingReceived", value:statusOk?"YES":"NO", displayed:false, isStateChange: true)
+    def msgType = msg.body.substring(0, msg.body.indexOf(":"))
+
+    switch(msgType)
+    {
+        case "health":
+            def statusOk = msg.status == 200
+            sendEvent(name:"pingReceived", value:statusOk?"YES":"NO", displayed:false, isStateChange: true)
+            break
+        case "alarm":
+            def alarmState = msg.body.substring(msg.body.indexOf(":") + 1)
+            def alarmOn = alarmState == "on"
+            sendEvent(name:"alarm", value:alarmOn?"both":"off", displayed:false, isStateChange: true)
+            break
+    }
+    
 }
 
 def installed() {
@@ -175,22 +187,34 @@ def playTrackAndRestore(uri, level=null) {
 
 def both() {
     log.info "Running both command"
+    return startAlarm()
 }
 
 def off() {
     log.info "Running off command"
+    return cancelAlarm()
 }
 
 def siren() {
     log.info "Running siren command"
+    return startAlarm()
 }
 
 def strobe() {
     log.info "Running strobe command"
+    return startAlarm()
 }
 
 
 // helper functions
+
+def startAlarm() {
+    return makeRestCall("GET", "/alarm/on")
+}
+
+def cancelAlarm() {
+    return makeRestCall("GET", "/alarm/off")
+}
 
 def urlEncode(toEncode) {
     return java.net.URLEncoder.encode(toEncode, "UTF-8")
