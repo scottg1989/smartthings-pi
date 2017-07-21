@@ -41,7 +41,7 @@ metadata {
         
 		command "testSpeak"
 		command "testSingleChime"
-		command "testDoubleChime"
+		command "testNotification"
 		command "testDoorbell"
 		command "testAlarm"
 	}
@@ -62,8 +62,8 @@ metadata {
         standardTile("singleChime", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
             state "default", label:"Single Chime", action:"testSingleChime", icon:"st.Electronics.electronics14"
         }
-        standardTile("doubleChime", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
-            state "default", label:"Double Chime", action:"testDoubleChime", icon:"st.Electronics.electronics14"
+        standardTile("notification", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
+            state "default", label:"Notification", action:"testNotification", icon:"st.Electronics.electronics14"
         }
         standardTile("doorbell", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
             state "default", label:"Doorbell", action:"testDoorbell", icon:"st.Electronics.electronics14"
@@ -142,8 +142,8 @@ def testSingleChime() {
      return playTrack('SingleChime')
 }
 
-def testDoubleChime() {
-     return playTrack('DoubleChime')
+def testNotification() {
+     return playTrack('winnot')
 }
 
 def testDoorbell() {

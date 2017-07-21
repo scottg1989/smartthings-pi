@@ -70,6 +70,10 @@ restServer.get('/playSound', function (req, res) {
     case 'Alarm':
       exec('aplay alarm.wav', function () {});
       break;
+    default:
+      console.log('Attempting ' + track + '.wav');
+      exec('aplay ' + track + '.wav');
+      break;
   }
   res.send('sound:ok');
 });
