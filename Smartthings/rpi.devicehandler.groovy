@@ -37,6 +37,7 @@ metadata {
         attribute   "pingReceived", "string"
 
 		capability "Audio Notification"
+        capability "Alarm"
         
 		command "testSpeak"
 		command "testSingleChime"
@@ -69,6 +70,19 @@ metadata {
         }
         standardTile("alarm", "device.switch", inactiveLabel: false, height: 1, width: 1, decoration: "flat") {
             state "default", label:"Alarm", action:"testAlarm", icon:"st.Electronics.electronics14"
+        }
+
+        standardTile("alarmState", "device.alarm", width: 2, height: 2) {      
+			state "off", label:'No alarm', icon:"st.secondary.off", backgroundColor:"#cccccc"
+			state "siren", label:'Alarm! (Siren)', icon:"st.secondary.siren", backgroundColor:"#fc1e1e"
+			state "strobe", label:'Alarm! (Strobe)', icon:"st.secondary.strobe", backgroundColor:"#fc1e1e"
+			state "both", label:'Alarm! (Both)', icon:"st.alarm.alarm.alarm", backgroundColor:"#fc1e1e"
+        }
+        standardTile("off", "device.alarm", inactiveLabel: false, decoration: "flat") {
+ 			state "default", label:'Alarm Off', action:"alarm.off"
+        } 
+        standardTile("on", "device.alarm", inactiveLabel: false, decoration: "flat") {
+ 			state "default", label:'Alarm On', action:"alarm.siren"
         }
 	}
 }
@@ -155,6 +169,24 @@ def playTrackAndResume(uri, level=null) {
 
 def playTrackAndRestore(uri, level=null) {
     log.info "playTrackAndRestore not yet supported."
+}
+
+// alarm commands
+
+def both() {
+    log.info "Running both command"
+}
+
+def off() {
+    log.info "Running off command"
+}
+
+def siren() {
+    log.info "Running siren command"
+}
+
+def strobe() {
+    log.info "Running strobe command"
 }
 
 

@@ -74,6 +74,16 @@ restServer.get('/playSound', function (req, res) {
   res.send('Hello World!');
 });
 
+//todo: change to a POST
+restServer.get('/alarm/on', function () {
+  res.send('alarm:on');
+});
+
+//todo: change to a POST
+restServer.get('/alarm/off', function () {
+  res.send('alarm:off');
+});
+
 
 
 /* Start the servers */
