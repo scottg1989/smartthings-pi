@@ -143,7 +143,7 @@ def testSingleChime() {
 }
 
 def testNotification() {
-     return playTrack('winnot')
+     return playTrack('Notification')
 }
 
 def testDoorbell() {

@@ -70,6 +70,15 @@ restServer.get('/playSound', function (req, res) {
     case 'Alarm':
       exec('aplay alarm.wav', function () {});
       break;
+    case 'Notification':
+      exec('omxplayer --vol -1600 winnot.mp3');
+      break;
+    case 'WelcomeScott':
+      exec('omxplayer --vol -1600 welcomeScott.mp3');
+      break;
+    case 'WelcomeTabby':
+      exec('omxplayer --vol -1600 welcomeTabby.mp3');
+      break;
     default:
       console.log('Attempting ' + track + '.wav');
       exec('aplay ' + track + '.wav');
